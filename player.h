@@ -21,19 +21,19 @@ const unsigned char init_data[]={
 		0x0F,0x0F,0x0F,0x01,0x00,0x00,0x00,0x00,0x00,
 
 };
-//
 
+//TA0 is clocked by SMCLK 1MHz
+//Wave Output to LED P1.1
 void initTB(void){
-	//TA0 is clocked by SMCLK 1MHz
-	//Wave Output to LED P1.1
 	TB0CTL |= TBSSEL__SMCLK | MC__UP | TBCLR;
 	TB0CCR0 = 0 ;
 	TB0CCR6 = 0;
 	TB0CCTL6 = OUTMOD_3;
 }
+
+//TB0 is clocked by SMCLK 1MHz
+//Wave Output to Buzzer P3.6 (TB0.6)
 void initTA(void){
-	//TB0 is clocked by SMCLK 1MHz
-	//Wave Output to Buzzer P3.6 (TB0.6)
 	TA0CTL |= TASSEL__SMCLK | MC__UP | TACLR;
 	TA0CCR0 = 4096;
 	TA0CCR4 = 0;
@@ -218,12 +218,12 @@ void delay_ms(unsigned int delaytime)
 		__delay_cycles(1000);
 }
 
+//ACLK: 32768Hz, SMCLK 1MHz, MCLK 1MHz
 void initClock(void){
 	UCSCTL4 |= SELA__REFOCLK | SELS__VLOCLK | SELM__VLOCLK;
 	UCSCTL5 |= DIVA__2 | DIVS__1;
 	UCSCTL6 &= ~XTS | ~XT1OFF;
 	UCSCTL6 |= XCAP_3;
-	//ACLK: 32768Hz, SMCLK 1MHz, MCLK 1MHz
 }
 
 void MyRESET()
