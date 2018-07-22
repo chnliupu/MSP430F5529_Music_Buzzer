@@ -22,6 +22,7 @@ const unsigned char init_data[]={
 
 };
 //
+
 void initTB(void){
 	//TA0 is clocked by SMCLK 1MHz
 	//Wave Output to LED P1.1
@@ -39,14 +40,36 @@ void initTA(void){
 	TA0CCTL4 = OUTMOD_7;
 }
 
+//Mobing window Filter
+unsigned int mwFilter(unsigned int value){
+	static int flag=0;
+	volatile int i = 0;
+	volatile int sum=0;
+	static unsigned int data[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	data[flag] = value;
+	if(flag < 15){
+		flag++;
+	}
+	else{
+		flag = 0;
+	}
+	for(i=0;i<15;i++){
+		sum +=data[i];
+	}
+	return(sum/15);
+}
+
 void initADC12(void){
 	//Enable ADC12 A5 PORT. 16*CLK
 	ADC12MCTL0 |= 0x05;
 	ADC12CTL0 |= ADC12ON | ADC12SHT01;
 	//Enable repeat-single-channel pulse sample.
-	ADC12CTL1 |= ADC12SHP | ADC12CONSEQ1;
+	ADC12CTL1 |= ADC12SHP | ADC12CONSEQ_3;
 	//Set resolution at 12Bit
 	ADC12CTL2 |= ADC12RES_2;
+	//ADC12MEM Place select
+	ADC12MCTL0 = ADC12INCH_5;
+	ADC12MCTL1 = ADC12INCH_6;
 	//Start sampling
 	ADC12CTL0 |= ADC12ENC | ADC12SC | ADC12MSC;
 }

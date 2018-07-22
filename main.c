@@ -2,6 +2,7 @@
 #include <song.h>
 #include <player.h>
 
+const unsigned int light[10]={1000,2000,1000,1200,2000,1000,3000,2200,600,100};
 /**
  * main.c
  */
@@ -19,11 +20,18 @@ int main(void)
     INIT_SSD1673();
     Init_buff();
 	DIS_IMG(2);
-	volatile value = 0;
 	volatile int i=0;
+	for(i=0;i<10;i++){
+	    TA0CCR4 = light[i];
+		sound(welcome[i][0],welcome[i][1],welcome[i][2],welcome[i][3]);
+	}
+	volatile unsigned int value = 0;
+	volatile unsigned int noise = 0;
 	while(1){
 		ADC12CTL0 |= ADC12SC;
 		value = ADC12MEM0;
+		noise = ADC12MEM1;
+		noise = mwFilter(value);
 		if(value < 20){
 			TA0CCR4 = 0;
 		}
